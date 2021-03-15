@@ -85,11 +85,34 @@ func updateMD(filePath string) string {
 
 	contents := string(file)
 
-	re := regexp.MustCompile(`\!\[.*\]\(resources\/(.*)\.jpg.*\)`)
+	// update resource insertions, images
+	re := regexp.MustCompile(`\!\[.*\]\(resources\/(.*\.[a-zA-Z]+).*\)`)
 	matches := re.FindAllStringSubmatch(contents, -1)
 	for _, m := range matches {
-		fmt.Println("   ", m[0], "->", fmt.Sprintf("![[attachments/%s.jpg]]", m[1]))
-		contents = strings.Replace(contents, m[0], fmt.Sprintf("![[attachments/%s.jpg]]", m[1]), -1)
+		fmt.Println("   ", m[0], "->", fmt.Sprintf("![[attachments/%s]]", m[1]))
+		contents = strings.Replace(contents, m[0], fmt.Sprintf("![[attachments/%s]]", m[1]), -1)
+	}
+
+	// update resource insertions, documents, and fix names back to the original doc name
+	re = regexp.MustCompile(`\[(.*)\]\(resources\/(.*)\)`)
+	matches = re.FindAllStringSubmatch(contents, -1)
+	for _, m := range matches {
+		fmt.Println("uikgjghjhgfj")
+		err = os.Rename(fmt.Sprintf("%s/resources/%s", filepath.Dir(filePath), m[2]), fmt.Sprintf("%s/resources/%s", filepath.Dir(filePath), m[1]))
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		fmt.Println("   ", m[0], "->", fmt.Sprintf("[%s](attachments/%s)", m[1], m[1]))
+		contents = strings.Replace(contents, m[0], fmt.Sprintf("[%s](attachments/%s)", m[1], m[1]), -1)
+	}
+
+	// update internal links to other pages
+	re = regexp.MustCompile(`\[(.*)\]\(quiver\:.*\)`)
+	matches = re.FindAllStringSubmatch(contents, -1)
+	for _, m := range matches {
+		fmt.Println("   ", m[0], "->", fmt.Sprintf("[[%s]]", m[1]))
+		contents = strings.Replace(contents, m[0], fmt.Sprintf("[[%s]]", m[1]), -1)
 	}
 
 	return contents
