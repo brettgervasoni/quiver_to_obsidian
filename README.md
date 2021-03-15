@@ -1,4 +1,4 @@
-# Obsidify
+# Obsidify - Quiver to Obsidian
 Converts Quiver App markdown to Obsidian MD markdown.
 
 This was built out of immediate frustration when attempting to try Obsidian, and I figure it may save someone else some time.
