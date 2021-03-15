@@ -97,7 +97,6 @@ func updateMD(filePath string) string {
 	re = regexp.MustCompile(`\[(.*)\]\(resources\/(.*)\)`)
 	matches = re.FindAllStringSubmatch(contents, -1)
 	for _, m := range matches {
-		fmt.Println("uikgjghjhgfj")
 		err = os.Rename(fmt.Sprintf("%s/resources/%s", filepath.Dir(filePath), m[2]), fmt.Sprintf("%s/resources/%s", filepath.Dir(filePath), m[1]))
 		if err != nil {
 			log.Fatalln(err)
